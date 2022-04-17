@@ -49,6 +49,7 @@ class RegisterSerializer(serializers.Serializer):
         help_text="An ISO 639 language code (with optional variant) "
                   "selected by the user. Ex: en-GB.",
     )
+
     authenticate = serializers.BooleanField(
         required=False,
         default=False,
