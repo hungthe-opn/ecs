@@ -18,3 +18,4 @@ class TypeView(APIView):
         print(queryset.query)
         return Response(serializer.data)
 
+

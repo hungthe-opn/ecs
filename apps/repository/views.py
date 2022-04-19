@@ -14,3 +14,14 @@ class RepositoryView(PaginationAPIView):
     result = self.paginate_queryset(serializer.data)
     return self.get_paginated_response(result)
 
+
+
+class RepositoryPostType(APIView):
+    serializers_class = RepositorySerializer
+
+    def post(self, request, format = None):
+        data = self.request.data
+        name = data['type_name']
+        queryset = Repository.objects.order_by('repository_id').filter(repo__iexact = name)
+        serializer = RepositorySerializer(queryset, data)
+        return Response(serializer.data)
