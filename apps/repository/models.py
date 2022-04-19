@@ -20,7 +20,7 @@ class Repository(models.Model):
     residual = models.IntegerField(db_column='RESIDUAL')  # Field name made lowercase.
     floor = models.IntegerField(db_column='FLOOR', choices=FLOORS, blank=True, null=True)  # Field name made lowercase.
     description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    type = models.ForeignKey(Type, models.DO_NOTHING, db_column='TYPE_ID', blank=True, null=True)  # Field name made lowercase.
+    type = models.ForeignKey(Type,related_name="repository", on_delete=models.CASCADE, db_column='TYPE_ID', blank=True, null=True)  # Field name made lowercase.
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:

@@ -8,3 +8,8 @@ class Category(models.Model):
     class Meta:
         managed = False
         db_table = 'category'
+        # unique_together = ['category_id, name']
+        ordering = ['name']
+
+    def __str__(self):
+        return '%d: %s' % (self.category_id, self.name)
