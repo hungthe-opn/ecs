@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_THIS_TO_SOMETHING_SECRET_IN_PRODUCT
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ['198.211.99.20', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -27,6 +27,12 @@ INSTALLED_APPS = [
     "core",
     "api",
     "ws",
+    "apps.employees",
+    "apps.category",
+    "apps.manage_asset",
+    "apps.type",
+    "apps.repository",
+    "apps.lend"
 ]
 
 ADDITIONAL_APPS = os.getenv("ADDITIONAL_APPS", None)
@@ -118,12 +124,12 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DATABASE_NAME", "d8eoqfkvfjm0e4"),
-        "USER": os.getenv("DATABASE_USER", "gyzrrdmqsfhhkr"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD", "ee988a9db356d81e22358a36a67e4a25e44881ae1155a2bc9a2f20f193aead81"),
-        "HOST": os.getenv("DATABASE_HOST", "ec2-34-236-87-247.compute-1.amazonaws.com"),
-        "PORT": os.getenv("DATABASE_PORT", "5432"),
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("DATABASE_NAME", "Nodejs"),
+        "USER": os.getenv("DATABASE_USER", "root"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", "Password@123"),
+        "HOST": os.getenv("DATABASE_HOST", ""),
+        "PORT": os.getenv("DATABASE_PORT", "3306"),
     }
 }
 
@@ -173,7 +179,7 @@ USE_TZ = False
 STATIC_URL = "/static/"
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "api.authentication.JSONWebTokenAuthentication",
     ),

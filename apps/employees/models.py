@@ -22,7 +22,8 @@ class AccountModel(models.Model):
 class Employees(models.Model):
     id = models.CharField(primary_key=True, max_length=4)
     position_id = models.IntegerField()
-    department_code = models.CharField(max_length=32, blank=True, null=True)
+    department_code = models.ForeignKey('DepartmentModel', to_field='code', db_column='department_code',
+                                        on_delete=models.DO_NOTHING, related_name='department_employees')
     account_id = models.IntegerField()
     job_title_code = models.CharField(max_length=32)
     company_code = models.CharField(max_length=32)
@@ -60,6 +61,7 @@ class Employees(models.Model):
     class Meta:
         managed = False
         db_table = 'employees'
+
 
 class DepartmentModel(models.Model):
     code = models.CharField(unique=True, max_length=32)

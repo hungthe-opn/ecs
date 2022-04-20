@@ -19,5 +19,11 @@ urlpatterns = (
         ),
         path("user/", include(user_urls, namespace="user")),
         path("user-files/", include(user_files_urls, namespace="user_files")),
+        path('category/', include('apps.category.urls', namespace="category_products")),
+        path('type/', include('apps.type.urls', namespace="types")),
+        path('repository/', include('apps.repository.urls', namespace="repository")),
+        path('lend/', include('apps.lend.urls', namespace="lend")),
+        path('employees/', include('apps.employees.urls', namespace="employees")),
+
     ]
 )

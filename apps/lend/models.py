@@ -24,7 +24,7 @@ class Lend(models.Model):
     insurance_end = models.DateField(db_column='INSURANCE_END', blank=True, null=True)  # Field name made lowercase.
     warranty = models.CharField(db_column='WARRANTY', max_length=30, blank=True, null=True)  # Field name made lowercase.
     condition = models.CharField(db_column='CONDITION', choices=CONDITION, max_length=45, blank=True, null=True)  # Field name made lowercase.
-    id = models.ForeignKey(Employees, models.DO_NOTHING, db_column='ID')  # Field name made lowercase.
+    id = models.ForeignKey(Employees, related_name='lend', on_delete=models.CASCADE, db_column='ID')  # Field name made lowercase.
     product = models.ForeignKey(Repository, models.DO_NOTHING, db_column='PRODUCT_ID')  # Field name made lowercase.
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)

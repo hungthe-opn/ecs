@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from typing import Dict, Union, Tuple, Callable, Optional, Type
-
+from datetime import datetime
 from django.utils.encoding import force_str
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -361,3 +361,52 @@ class DiscriminatorMappingSerializer:
         self.mapping = mapping
         self.type_field_name = type_field_name
         self.many = many
+def convert_date_front_to_back(date_string):
+    """
+    Convert date string %d/%m/%Y to %Y-%m-%d
+    """
+    return datetime.strptime(date_string, '%d/%m/%Y').strftime('%Y-%m-%d')
+
+
+def convert_date_back_to_front(date_string):
+    """
+    Convert date string %Y-%m-%d to %d/%m/%Y
+    """
+    return datetime.strptime(date_string, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+
+def convert_date_front_to_back(date_string):
+    """
+    Convert date string %d/%m/%Y to %Y-%m-%d
+    """
+    return datetime.strptime(date_string, '%d/%m/%Y').strftime('%Y-%m-%d')
+
+
+def convert_date_back_to_front(date_string):
+    """
+    Convert date string %Y-%m-%d to %d/%m/%Y
+    """
+    return datetime.strptime(date_string, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+
+def is_date_error(date_string):
+    try:
+        datetime.strptime(date_string, '%d/%m/%Y')
+        return False
+    except ValueError:
+        return True
+
+
+def custom_response(res, list=True, response_code=200, response_msg='SUCCESS', msg_display=''):
+    if list:
+        data = res
+    else:
+        data = [res]
+    response = {
+        'data': data,
+        'response_code': response_code,
+        'response_msg': response_msg
+    }
+    if msg_display != '':
+        response['msg_display'] = msg_display
+    return response
