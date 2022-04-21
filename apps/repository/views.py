@@ -14,7 +14,7 @@ class RepositoryView(APIView):
     def get(self, request, format=None):
         queryset = Repository.objects.all()
         serializer = RepositorySerializer(queryset,many=True)
-        return Response('result', serializer.data)
+        return Response({'result': serializer.data})
 
 
 class RepositoryPostType(APIView):

@@ -28,7 +28,7 @@ class CategoryDetailView(APIView):
         except Category.DoesNotExist:
             raise Http404
 
-    def get(self,request,pk,format=None):
+    def get(self, request, pk, format=None):
         category = self.get_object(pk)
         serializer = CategorySerializer(category)
         return Response(serializer.data)

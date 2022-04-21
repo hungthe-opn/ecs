@@ -361,18 +361,6 @@ class DiscriminatorMappingSerializer:
         self.mapping = mapping
         self.type_field_name = type_field_name
         self.many = many
-def convert_date_front_to_back(date_string):
-    """
-    Convert date string %d/%m/%Y to %Y-%m-%d
-    """
-    return datetime.strptime(date_string, '%d/%m/%Y').strftime('%Y-%m-%d')
-
-
-def convert_date_back_to_front(date_string):
-    """
-    Convert date string %Y-%m-%d to %d/%m/%Y
-    """
-    return datetime.strptime(date_string, '%Y-%m-%d').strftime('%d/%m/%Y')
 
 
 def convert_date_front_to_back(date_string):

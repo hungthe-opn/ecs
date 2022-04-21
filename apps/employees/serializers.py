@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Employees, AssetEmployeeModel,DepartmentModel
 from api.utils import convert_date_back_to_front
 from ..category.models import Category
+from ..type.models import Type
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
@@ -38,14 +39,14 @@ class DepartmentLendSerializer(serializers.ModelSerializer):
 
     def get_lend_device(self, obj):
         result = dict()
-        categories = Category.objects.all()
+        types = Type.objects.all()
         total = 0
-        for category in categories:
+        for type in types:
             counter = 0
             emps = obj.department_employees.all()
             for e in emps:
-                counter += e.lend.all().filter(product_id__type_id__category_id=category.category_id).count()
-            result[category.name] = counter
+                counter += e.lend.all().filter(product_id__type_id=type.type_id).count()
+            result[type.name] = counter
             total += counter
         result['total'] = total
         return result
