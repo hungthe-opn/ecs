@@ -1,11 +1,10 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
-from .serializer import LendSerializer, LendRemoteSerializer,LendAssetSerializer
+from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer
 
 
 class LendView(APIView):
@@ -20,9 +19,10 @@ class ListLentView(PaginationAPIView):
 
     def get(self, request, format=None, *args):
         queryset = Lend.objects.filter(stt=2)
+
+        # request id params
         if request.query_params.get('employees_id'):
             queryset = queryset.filter(id=request.query_params.get('employees_id'))
-        print(request.query_params.get('employees_id'))
         serializer = LendRemoteSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
@@ -53,7 +53,7 @@ class EndRemoteView(PaginationAPIView):
 class CreateRemoteView(APIView):
     serializer_class = LendRemoteSerializer()
 
-    def post(self,request, form=None,*args):
+    def post(self, request, *args):
         data = request.data
         print(data)
         serializer = self.serializer_class(data = data)
@@ -68,6 +68,7 @@ class UploadRemoteView(APIView):
     def patch(self, request, pk, format=None):
         queryset = Lend.objects.filter(lend_id=pk).first()
         data = request.data
+        # time type conversion
         if data.get('rent_time'):
             data['rent_time'] = convert_date_front_to_back(data.get('rent_time'))
         if data.get('pay_time'):
@@ -100,3 +101,10 @@ class ListDepartmentsView(PaginationAPIView):
         serializer = LendAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
+
+
+# class DeviceLendView(PaginationAPIView):
+#     pagination_class = CustomPagination
+#
+#     def get(self, request, *args, **kwargs):
+

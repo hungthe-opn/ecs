@@ -15,7 +15,6 @@ class TypeView(APIView):
     def get(self, request, format=None):
         queryset = Type.objects.prefetch_related('repository').all()
         serializer = TypeSerializer(queryset, many=True)
-        print(queryset.query)
         return Response(serializer.data)
 
 

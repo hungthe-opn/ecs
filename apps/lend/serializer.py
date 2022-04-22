@@ -74,7 +74,7 @@ class LendAssetSerializer(serializers.ModelSerializer):
 class DeviceLendSerializer(serializers.Serializer):
     floor = serializers.SerializerMethodField()
     device_name = serializers.SerializerMethodField()
-    quantity = serializers.SerializerMethodField()
+    # quantity = serializers.SerializerMethodField()
 
     class Meta:
         model = Lend
@@ -86,5 +86,5 @@ class DeviceLendSerializer(serializers.Serializer):
     def get_device_name(self, obj):
         return obj.product.name
 
-    def get_quantity(self, obj):
-        return obj.product.quantity
+    # def get_quantity(self, obj):
+    #     return obj.product.quantity
