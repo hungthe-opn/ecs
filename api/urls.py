@@ -24,6 +24,7 @@ urlpatterns = (
         path('repository/', include('apps.repository.urls', namespace="repository")),
         path('lend/', include('apps.lend.urls', namespace="lend")),
         path('employees/', include('apps.employees.urls', namespace="employees")),
+        path('manage/', include('apps.manage_asset.urls', namespace="manage")),
 
     ]
 )

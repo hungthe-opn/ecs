@@ -13,7 +13,7 @@ class LendSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lend
-        fields = ('id', 'department_code', 'employee_name', 'device_code', 'condition', 'rent_time', 'pay_time', 'warranty', 'describe',)
+        fields = ('id', 'department_code', 'employee_name', 'device_code', 'condition', 'rent_time', 'pay_time', 'warranty')
 
     def get_id(self, obj, format=None):
         return obj.id.id
@@ -71,7 +71,7 @@ class LendAssetSerializer(serializers.ModelSerializer):
         return obj.product.name
 
 
-class DeviceLendSerializer(serializers.Serializer):
+class DeviceLendSerializer(serializers.ModelSerializer):
     floor = serializers.SerializerMethodField()
     device_name = serializers.SerializerMethodField()
     # quantity = serializers.SerializerMethodField()
@@ -86,5 +86,11 @@ class DeviceLendSerializer(serializers.Serializer):
     def get_device_name(self, obj):
         return obj.product.name
 
-    # def get_quantity(self, obj):
-    #     return obj.product.quantity
+    # def create(self,validated_data):
+    #     return Lend.objects.create(**validated_data,stt=3)
+
+
+class CreateDeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lend
+        fields = ('lend_id','device_code', 'describe', 'quantity', 'status', 'id', 'product', 'stt')

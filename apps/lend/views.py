@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
-from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer
+from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer, \
+    CreateDeviceSerializer
 
 
 class LendView(APIView):
@@ -43,7 +44,7 @@ class EndRemoteView(PaginationAPIView):
 
     def post(self, request, pk, format=None, *args, **kwargs):
         lend = Lend.objects.filter(lend_id=pk).first()
-        lend.stt = 3
+        lend.stt = 1
         lend.save()
         return Response({
             'message': 'OK'
@@ -103,8 +104,23 @@ class ListDepartmentsView(PaginationAPIView):
         return self.get_paginated_response(result)
 
 
-# class DeviceLendView(PaginationAPIView):
-#     pagination_class = CustomPagination
-#
-#     def get(self, request, *args, **kwargs):
+class DeviceLendView(PaginationAPIView):
+    pagination_class = CustomPagination
 
+    def get(self, request, format=None):
+        queryset = Lend.objects.filter(stt=3)
+        serializer = DeviceLendSerializer(queryset, many=True)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
+
+
+class DeviceLendSerializer(APIView):
+    def post(self, request, format=None):
+        data = request.data
+        data['stt'] = 3
+        serializer = CreateDeviceSerializer(data=data)
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
