@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.http import JsonResponse
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
 from pytz.exceptions import UnknownTimeZoneError
@@ -17,7 +18,11 @@ from .utils import (
     validate_data_custom_fields,
     ExceptionMappingType,
 )
-
+import json
+import requests
+from django.conf import settings
+from django.http import JsonResponse
+from apps.employees.models import Employees
 
 def map_exceptions(exceptions: ExceptionMappingType):
     """
@@ -319,6 +324,56 @@ def accept_timezone():
     >>> <StaticTzInfo 'Etc/GMT-1'>
     """
 
+    def format_user_id(user_id):
+        user_id = str(user_id)
+        if len(user_id) == 1:
+            formatted_id = "000" + user_id
+            return formatted_id
+        elif len(user_id) == 2:
+            formatted_id = "00" + user_id
+            return formatted_id
+        elif len(user_id) == 3:
+            formatted_id = "0" + user_id
+            return formatted_id
+
+        return user_id
+
+    def login_required(function):
+        def wrapper(request, *args, **kwargs):
+            token = request.META.get('HTTP_AUTHORIZATION', '')
+            response = requests.post('{}/auth/verify/'.format(settings.AUTH_API), headers={
+                "Authorization": '{}'.format(token)
+            })
+            data = json.loads(response.content)
+            if response.status_code >= 400:
+                return JsonResponse(data, status=response.status_code)
+            kwargs['user_id'] = format_user_id(data['data']['user_info']['user_id'])
+            employee_data = Employees.objects.select_related('account').prefetch_related('account') \
+                .prefetch_related('fac_employees').get(id=kwargs['user_id'])
+
+            # If employee is DIVISION_MANAGER, or employee is PM return 1
+            # kwargs['is_pm'] = 0
+            # if (employee_data.job_title_code == 'DIVISION_MANAGER'):
+            #     kwargs['is_pm'] = 1
+            # else:
+            #     employee_manager = employee_data.employee_project_extra.filter(employee_type='PM').count()
+            #     if employee_manager > 0:
+            #         kwargs['is_pm'] = 1
+            # if hasattr(employee_data, 'fac_employees'):
+            #     fac = employee_data.fac_employees
+            #     if fac.is_collaborator == 0:
+            #         kwargs['is_fac'] = 1
+            #         kwargs['is_fac_collaborator'] = 0
+            #     else:
+            #         kwargs['is_fac'] = 0
+            #         kwargs['is_fac_collaborator'] = 1
+            # else:
+            #     kwargs['is_fac'] = 0
+            #     kwargs['is_fac_collaborator'] = 0
+            return function(request, *args, **kwargs)
+
+        return wrapper
+
     def validate_decorator(func):
         def func_wrapper(*args, **kwargs):
             request = get_request(args)
@@ -349,3 +404,5 @@ def accept_timezone():
         return func_wrapper
 
     return validate_decorator
+
+
