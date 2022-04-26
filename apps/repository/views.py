@@ -8,17 +8,18 @@ from api.pagination import CustomPagination,PaginationAPIView
 # Create your views here.
 
 
-class RepositoryView(APIView):
+class RepositoryView(PaginationAPIView):
     serializers_class = RepositorySerializer
+    pagination_class = CustomPagination
 
     def get(self, request, format=None):
         queryset = Repository.objects.all()
         serializer = RepositorySerializer(queryset,many=True)
-        return Response({'result': serializer.data})
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
 
 
 class RepositoryPostType(APIView):
-    serializers_class = RepositorySerializer
 
     def get(self, request, pk, format=None):
         queryset = Repository.objects.filter(type_id=pk)
@@ -46,3 +47,25 @@ class RepositoryPostType(APIView):
             serializer.save()
             return Response({'result': serializer.data})
         return Response(serializer.errors,  status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddProductView(PaginationAPIView):
+    pagination_class = CustomPagination
+
+    def get(self, request, pk, format=None):
+        queryset = Repository.objects.filter(product_id=pk)
+        serializer = AddRepositorySerializer(queryset, many=True)
+        print(serializer.data)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
+
+    def post(self, request, pk, format=None):
+        data = self.request.data
+        quantity = data['quantity']
+        print(quantity)
+        repository = Repository.objects.filter(product_id=pk).first()
+        repository.quantity += quantity
+        repository.save()
+        serializer = AddRepositorySerializer(repository)
+
+        return Response({'result': serializer.data})

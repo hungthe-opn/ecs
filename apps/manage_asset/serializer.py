@@ -9,7 +9,6 @@ class ListAssetSerializer(serializers.ModelSerializer):
     department_code = serializers.SerializerMethodField()
     device_code = serializers.SerializerMethodField()
     type_name = serializers.SerializerMethodField()
-    quantity = serializers.SerializerMethodField()
     stt = serializers.SerializerMethodField()
 
     class Meta:
@@ -31,8 +30,7 @@ class ListAssetSerializer(serializers.ModelSerializer):
     def get_type_name(self, obj):
         return obj.product.type.name
 
-    def get_quantity(self, obj):
-        return obj.product.quantity
-
     def get_stt(self,obj):
         return obj.lend.stt
+
+

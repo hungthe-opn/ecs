@@ -16,3 +16,4 @@ class ListAssetView(PaginationAPIView):
         serializer = ListAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
+
