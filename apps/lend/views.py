@@ -5,7 +5,7 @@ from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
 from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer, \
-    CreateDeviceSerializer
+    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer
 
 
 class LendView(APIView):
@@ -92,6 +92,27 @@ class AssetDepartmentsView(PaginationAPIView):
         return self.get_paginated_response(result)
 
 
+class AssetDepartmentsExportView(APIView):
+
+    def get(self, request, pk, format=None):
+        queryset = Lend.objects.filter(lend_id=pk)
+        serializer = LendAssetExportSerializer(queryset, many=True)
+        return Response({'result': serializer.data})
+
+    def post(self, request, pk, *args, **kwargs):
+        data = self.request.data
+        data['stt'] = 4
+        data = data['reason']
+        print(data)
+        queryset = Lend.objects.filter(lend_id=pk)
+        serializer = LendAssetExportSerializer(queryset, data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'result': serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ListDepartmentsView(PaginationAPIView):
     pagination_class = CustomPagination
 
@@ -115,6 +136,7 @@ class DeviceLendView(PaginationAPIView):
 
 
 class DeviceLendSerializer(APIView):
+
     def post(self, request, format=None):
         data = request.data
         data['stt'] = 3
@@ -124,3 +146,23 @@ class DeviceLendSerializer(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InsuranceView(PaginationAPIView):
+    pagination_class = CustomPagination
+
+    def get(self, request, *args):
+        queryset = Lend.objects.filter(stt=6)
+        serializer = InsuranceSerializer(queryset, many=True)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
+
+
+class EndInventoryView(APIView):
+
+    def post(self, request, pk, format=None, *args, **kwargs):
+        insurance = Lend.objects.filter(lend_id=pk, stt=6).first()
+        insurance.stt = 1
+        insurance.save()
+        serializer = InsuranceSerializer(insurance)
+        return Response({'result': serializer.data})

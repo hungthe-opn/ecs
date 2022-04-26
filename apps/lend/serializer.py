@@ -94,3 +94,53 @@ class CreateDeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lend
         fields = ('lend_id','device_code', 'describe', 'quantity', 'status', 'id', 'product', 'stt')
+
+
+class LendAssetExportSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    employee_name = serializers.SerializerMethodField()
+    department_code = serializers.SerializerMethodField()
+    repository_name = serializers.SerializerMethodField()
+    reason = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lend
+        fields = ('id', 'employee_name', 'department_code', 'device_code', 'repository_name', 'stt', 'reason')
+
+    def get_id(self, obj, format=None):
+        return obj.id.id
+
+    def get_employee_name(self, obj, format=None):
+        return obj.id.name
+
+    def get_department_code(self, obj, format=None):
+        return obj.id.department_code.code
+
+    def get_repository_name(self, obj, format=None):
+        return obj.product.name
+
+    def get_reason(self, obj, format=None):
+        return obj.lend.first().reason
+
+
+class InsuranceSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    employee_name = serializers.SerializerMethodField()
+    department_code = serializers.SerializerMethodField()
+    repository_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Lend
+        fields = ('id', 'employee_name', 'department_code', 'repository_name', 'condition', 'insurance_start', 'insurance_end', 'warranty', 'describe','stt')
+
+    def get_id(self, obj, format=None):
+        return obj.id.id
+
+    def get_employee_name(self, obj, format=None):
+        return obj.id.name
+
+    def get_department_code(self, obj, format=None):
+        return obj.id.department_code.code
+
+    def get_repository_name(self, obj, format=None):
+        return obj.product.name

@@ -14,7 +14,7 @@ class Manage(models.Model):
     reason = models.CharField(db_column='REASON', max_length=255, blank=True, null=True)  # Field name made lowercase.
     status = models.IntegerField(db_column='STATUS')  # Field name made lowercase.
     status_manage = models.CharField(db_column='STATUS_MANAGE', max_length=45, blank=True, null=True)  # Field name made lowercase.
-    lend = models.ForeignKey(Lend, models.DO_NOTHING, db_column='LEND_ID')  # Field name made lowercase.
+    lend = models.ForeignKey(Lend, related_name='lend', on_delete=models.CASCADE, db_column='LEND_ID')  # Field name made lowercase.
     id = models.ForeignKey(Employees, models.DO_NOTHING, db_column='ID')  # Field name made lowercase.
     product = models.ForeignKey(Repository, models.DO_NOTHING, db_column='PRODUCT_ID')  # Field name made lowercase.
     created_at = models.DateTimeField(blank=True, null=True)
