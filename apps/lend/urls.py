@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import LendView, SearchLendView, ListLentView, EndRemoteView, CreateRemoteView, UploadRemoteView, \
     ListDepartmentsView, AssetDepartmentsView, DeviceLendView, AssetDepartmentsExportView, \
-    InsuranceView, EndInventoryView, DeviceLendExportView, NotifyView, ImportLendRepository,ExportLendRepository
+    InsuranceView, EndInventoryView, DeviceLendExportView, NotifyView, ImportLendRepository,ExportLendRepository, AddRemotedView
 app_name = 'lend'
 
 urlpatterns = [
@@ -21,5 +21,5 @@ urlpatterns = [
     path('notify/', NotifyView.as_view(), name='notify'),
     path('importlend/<pk>', ImportLendRepository.as_view(), name='import_lend'),
     path('exportlend/<pk>', ExportLendRepository.as_view(), name='export_lend'),
-
+    path('addremote/', AddRemotedView.as_view(), name='add_remote'),
 ]

@@ -163,3 +163,13 @@ class NotifySerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         return obj.product.name
+
+
+class AddRemotesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lend
+        fields = ('id', 'product_id', 'stt', 'device_code', 'rent_time', 'pay_time')
+
+
+

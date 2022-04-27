@@ -69,3 +69,10 @@ class AddProductView(PaginationAPIView):
         serializer = AddRepositorySerializer(repository)
 
         return Response({'result': serializer.data})
+
+
+class RepositoryListView(APIView):
+    def get(self,request):
+        queryset = Repository.objects.all()
+        serializer = QuantitySerializer(queryset, many=True)
+        return Response({'result': serializer.data})

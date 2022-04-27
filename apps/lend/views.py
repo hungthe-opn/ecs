@@ -6,7 +6,7 @@ from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
 from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer, \
-    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer
+    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer, AddRemotesSerializer
 from datetime import date, timedelta
 from django.db.models import Q
 
@@ -242,6 +242,33 @@ class ExportLendRepository(APIView):
         lend.product.quantity -= 1
         lend.product.save()
         serializer = AddManagerSerializer(data=manage)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors)
+
+
+class AddRemotedView(APIView):
+
+    def post(self, request):
+        data = request.data
+        lend = Lend.objects.all()
+        lend.stt = 2
+        lend.save()
+        lend_add = {
+            'quantity': 1,
+            'device_code': request.data.get('device_code'),
+            'lend': lend.lend_id,
+            'id': lend.id,
+            'product': lend.product_id,
+            }
+        if data.get('rent_time'):
+            data['rent_time'] = convert_date_front_to_back(data.get('rent_time'))
+        if data.get('pay_time'):
+            data['pay_time'] = convert_date_front_to_back(data.get('pay_time'))
+        lend.product.quantity -= 1
+        lend.product.save()
+        serializer = AddRemotesSerializer(data=lend_add)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=200)
