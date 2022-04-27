@@ -1,3 +1,4 @@
+import self as self
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -5,7 +6,9 @@ from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
 from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer, \
-    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer
+    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer
+from datetime import date, timedelta
+from django.db.models import Q
 
 
 class LendView(APIView):
@@ -81,6 +84,18 @@ class UploadRemoteView(APIView):
             return Response({'result': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# class UploadInsuranceView(APIView):
+#     def patch(self, request, pk, format=None):
+#         queryset = Lend.objects.filter(lend_id=pk, stt = 6)
+#
+#
+#
+#
+#
+#
+#
+#
+
 
 class AssetDepartmentsView(PaginationAPIView):
     pagination_class = CustomPagination
@@ -102,7 +117,7 @@ class AssetDepartmentsExportView(APIView):
     def post(self, request, pk, *args, **kwargs):
         data = self.request.data
         data['stt'] = 4
-        data = data['reason']
+        # data = data['reason']
         print(data)
         queryset = Lend.objects.filter(lend_id=pk)
         serializer = LendAssetExportSerializer(queryset, data=data)
@@ -135,7 +150,7 @@ class DeviceLendView(PaginationAPIView):
         return self.get_paginated_response(result)
 
 
-class DeviceLendSerializer(APIView):
+class DeviceLendExportView(APIView):
 
     def post(self, request, format=None):
         data = request.data
@@ -166,3 +181,30 @@ class EndInventoryView(APIView):
         insurance.save()
         serializer = InsuranceSerializer(insurance)
         return Response({'result': serializer.data})
+
+    def patch(self, request, pk, *args, format=None):
+        queryset = Lend.objects.filter(lend_id= pk, stt=1).first()
+        data = request.data
+        queryset.stt = 6
+        if data.get('insurance_start'):
+            data['insurance_start'] = convert_date_front_to_back(data.get('insurance_start'))
+        if data.get('insurance_end'):
+            data['insurance_end'] = convert_date_front_to_back(data.get('insurance_end'))
+
+        serializer = InsuranceSerializer(queryset, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'result': serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class NotifyView(APIView):
+
+    def get(self, request, *args):
+        today = date.today()
+        coming_due_date = today + timedelta(days=10)
+        coming_due = Lend.objects.filter(stt=1).filter(Q(pay_time__lte=coming_due_date) |
+                                                       Q(pay_time__lte=today))
+
+        serializer = NotifySerializer(coming_due, many=True)
+        return Response(serializer.data)

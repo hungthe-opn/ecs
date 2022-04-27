@@ -12,7 +12,7 @@ class ListAssetView(PaginationAPIView):
     pagination_class = CustomPagination
 
     def get(self, request, *args, **kwargs):
-        queryset = Manage.objects.filter(lend_id__stt=4)
+        queryset = Manage.objects.filter(lend_id__stt=4, status=1)
         serializer = ListAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)

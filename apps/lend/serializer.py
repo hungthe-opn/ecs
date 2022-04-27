@@ -102,10 +102,12 @@ class LendAssetExportSerializer(serializers.ModelSerializer):
     department_code = serializers.SerializerMethodField()
     repository_name = serializers.SerializerMethodField()
     reason = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    status_manage = serializers.SerializerMethodField()
 
     class Meta:
         model = Lend
-        fields = ('id', 'employee_name', 'department_code', 'device_code', 'repository_name', 'stt', 'reason')
+        fields = ('id', 'employee_name', 'department_code', 'device_code', 'repository_name', 'stt', 'reason', 'status', 'status_manage')
 
     def get_id(self, obj, format=None):
         return obj.id.id
@@ -122,6 +124,11 @@ class LendAssetExportSerializer(serializers.ModelSerializer):
     def get_reason(self, obj, format=None):
         return obj.lend.first().reason
 
+    def get_status(self, obj, format=None):
+        return obj.lend.first().status
+
+    def get_status_manage(self, obj, format=None):
+        return obj.lend.first().status_manage
 
 class InsuranceSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
@@ -143,4 +150,16 @@ class InsuranceSerializer(serializers.ModelSerializer):
         return obj.id.department_code.code
 
     def get_repository_name(self, obj, format=None):
+        return obj.product.name
+
+
+# class ExportInsuranceSerializer(serializers.ModelSerializer):
+class NotifySerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model =Lend
+        fields = ('lend_id','name', 'rent_time', 'pay_time')
+
+    def get_name(self, obj):
         return obj.product.name

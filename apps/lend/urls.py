@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import LendView, SearchLendView, ListLentView, EndRemoteView,  CreateRemoteView,UploadRemoteView, ListDepartmentsView, AssetDepartmentsView, DeviceLendView,DeviceLendSerializer, AssetDepartmentsExportView, InsuranceView, EndInventoryView
-
+from .views import LendView, SearchLendView, ListLentView, EndRemoteView, CreateRemoteView, UploadRemoteView, \
+    ListDepartmentsView, AssetDepartmentsView, DeviceLendView, AssetDepartmentsExportView, \
+    InsuranceView, EndInventoryView, DeviceLendExportView, NotifyView
 
 app_name = 'lend'
 
@@ -15,8 +16,9 @@ urlpatterns = [
     path('assertexport/<pk>', AssetDepartmentsExportView.as_view(), name='lend_assert_export'),
     path('departments/', ListDepartmentsView.as_view(), name='list_departments'),
     path('device/', DeviceLendView.as_view(), name='list_device'),
-    path('createdevice/', DeviceLendSerializer.as_view(), name='create_device'),
+    path('createdevice/', DeviceLendExportView.as_view(), name='create_device'),
     path('insurance/', InsuranceView.as_view(), name='insurance'),
     path('endinsurance/<pk>', EndInventoryView.as_view(), name='endinsurance'),
+    path('notify/', NotifyView.as_view(), name='notify'),
 
 ]
