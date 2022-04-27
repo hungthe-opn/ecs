@@ -1,12 +1,11 @@
 from django.urls import path
 from .views import LendView, SearchLendView, ListLentView, EndRemoteView, CreateRemoteView, UploadRemoteView, \
     ListDepartmentsView, AssetDepartmentsView, DeviceLendView, AssetDepartmentsExportView, \
-    InsuranceView, EndInventoryView, DeviceLendExportView, NotifyView
-
+    InsuranceView, EndInventoryView, DeviceLendExportView, NotifyView, ImportLendRepository,ExportLendRepository
 app_name = 'lend'
 
 urlpatterns = [
-    path('', LendView.as_view(), name='lend_listus'),
+    path('', LendView.as_view(), name='lend_listview'),
     path('list/', ListLentView.as_view(), name='lend_list'),
     path('search/<pk>', SearchLendView.as_view(), name='lend_remote'),
     path('change/<pk>', EndRemoteView.as_view(), name='change'),
@@ -18,7 +17,9 @@ urlpatterns = [
     path('device/', DeviceLendView.as_view(), name='list_device'),
     path('createdevice/', DeviceLendExportView.as_view(), name='create_device'),
     path('insurance/', InsuranceView.as_view(), name='insurance'),
-    path('endinsurance/<pk>', EndInventoryView.as_view(), name='endinsurance'),
+    path('endinsurance/<pk>', EndInventoryView.as_view(), name='end_insurance'),
     path('notify/', NotifyView.as_view(), name='notify'),
+    path('importlend/<pk>', ImportLendRepository.as_view(), name='import_lend'),
+    path('exportlend/<pk>', ExportLendRepository.as_view(), name='export_lend'),
 
 ]

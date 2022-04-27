@@ -10,6 +10,8 @@ from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerialize
 from datetime import date, timedelta
 from django.db.models import Q
 
+from ..manage_asset.serializer import AddManagerSerializer
+
 
 class LendView(APIView):
     def get(self, request, format=None):
@@ -83,18 +85,6 @@ class UploadRemoteView(APIView):
             serializer.save()
             return Response({'result': serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class UploadInsuranceView(APIView):
-#     def patch(self, request, pk, format=None):
-#         queryset = Lend.objects.filter(lend_id=pk, stt = 6)
-#
-#
-#
-#
-#
-#
-#
-#
 
 
 class AssetDepartmentsView(PaginationAPIView):
@@ -208,3 +198,51 @@ class NotifyView(APIView):
 
         serializer = NotifySerializer(coming_due, many=True)
         return Response(serializer.data)
+
+
+class ImportLendRepository(APIView):
+
+    def post(self, request, pk):
+        lend = Lend.objects.filter(lend_id=pk).first()
+        lend.stt = 4
+        lend.save()
+        manage = {
+            'import_date': date.today(),
+            'quantity': 1,
+            'reason': request.data.get('reason'),
+            'status': 1,
+            'lend': lend.lend_id,
+            'id': '0018',
+            'product': lend.product_id,
+        }
+        lend.product.quantity += 1
+        lend.product.save()
+        serializer = AddManagerSerializer(data=manage)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors)
+
+
+class ExportLendRepository(APIView):
+
+    def post(self, request, pk):
+        lend = Lend.objects.filter(lend_id=pk).first()
+        lend.stt = 6
+        lend.save()
+        manage = {
+            'import_date': date.today(),
+            'quantity': 1,
+            'reason': request.data.get('reason'),
+            'status': 2,
+            'lend': lend.lend_id,
+            'id': '0018',
+            'product': lend.product_id,
+        }
+        lend.product.quantity -= 1
+        lend.product.save()
+        serializer = AddManagerSerializer(data=manage)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors)

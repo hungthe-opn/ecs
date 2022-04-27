@@ -56,7 +56,7 @@ class LendAssetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lend
-        fields = ('id', 'employee_name', 'department_code', 'device_code', 'repository_name', 'condition',  'updated_at', 'stt')
+        fields = ('lend_id', 'id', 'product_id', 'employee_name', 'department_code', 'device_code', 'repository_name', 'condition',  'updated_at', 'stt')
 
     def get_id(self, obj, format=None):
         return obj.id.id

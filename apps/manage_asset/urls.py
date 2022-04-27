@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import ListAssetView
-
+from .views import ImportManageView, ExportManageView
 
 app_name = 'manage_asset'
 
 urlpatterns = [
-    path('', ListAssetView.as_view(), name='list_manage'),
-
+    path('import/', ImportManageView.as_view(), name='import'),
+    path('export/', ExportManageView.as_view(), name='export'),
 ]

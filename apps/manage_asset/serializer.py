@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import *
-from .views import *
 
 
 class ListAssetSerializer(serializers.ModelSerializer):
@@ -32,6 +31,16 @@ class ListAssetSerializer(serializers.ModelSerializer):
 
     def get_stt(self,obj):
         return obj.lend.stt
+
+
+class AddManagerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Manage
+        fields = ('import_date', 'quantity', 'reason', 'status', 'lend', 'id', 'product')
+
+
+
 
 
 # class ExportRepositorySerializer(serializers.ModelSerializer):
