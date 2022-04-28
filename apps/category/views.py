@@ -5,11 +5,13 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from apps.category.models import Category
 from apps.category.serializer import CategorySerializer
+from api.pagination import CustomPagination, PaginationAPIView
+
  # Create your views here.
 
 
-class CategoryView(APIView):
-
+class CategoryView(PaginationAPIView):
+    pagination_class = CustomPagination
     """
     Category information view
     """
@@ -17,7 +19,8 @@ class CategoryView(APIView):
     def get(self, request, format=None):
         category = Category.objects.all()
         serializer = CategorySerializer(category, many=True)
-        return Response(serializer.data)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
 
 
 class CategoryDetailView(APIView):

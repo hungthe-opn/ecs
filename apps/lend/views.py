@@ -5,8 +5,9 @@ from rest_framework.views import APIView
 from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
-from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerializer, DeviceLendSerializer, \
-    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer, AddRemotesSerializer
+from .serializer import LendSerializer, DeviceLendSerializer, \
+    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer, AddRemotesSerializer, \
+    ListLendRemoteSerializer, ListLendAssetSerializer
 from datetime import date, timedelta
 from django.db.models import Q
 from ..manage_asset.serializer import AddManagerSerializer
@@ -28,7 +29,7 @@ class ListLentView(PaginationAPIView):
         # request id params
         if request.query_params.get('employees_id'):
             queryset = queryset.filter(id=request.query_params.get('employees_id'))
-        serializer = LendRemoteSerializer(queryset, many=True)
+        serializer = ListLendRemoteSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
 
@@ -38,7 +39,7 @@ class SearchLendView(PaginationAPIView):
 
     def get(self, request, pk, format=None, *args, **kwargs):
         queryset = Lend.objects.filter(id=pk)
-        serializer = LendRemoteSerializer(queryset, many=True)
+        serializer = ListLendRemoteSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
 
@@ -56,7 +57,7 @@ class EndRemoteView(PaginationAPIView):
 
 
 class CreateRemoteView(APIView):
-    serializer_class = LendRemoteSerializer()
+    serializer_class = ListLendRemoteSerializer()
 
     def post(self, request, *args):
         data = request.data
@@ -79,7 +80,7 @@ class UploadRemoteView(APIView):
         if data.get('pay_time'):
             data['pay_time'] = convert_date_front_to_back(data.get('pay_time'))
 
-        serializer = LendRemoteSerializer(queryset, data=data, partial=True)
+        serializer = ListLendRemoteSerializer(queryset, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({'result': serializer.data})
@@ -91,7 +92,7 @@ class AssetDepartmentsView(PaginationAPIView):
 
     def get(self, request, format=None, *args):
         queryset = Lend.objects.filter(stt=1)
-        serializer = LendAssetSerializer(queryset, many=True)
+        serializer = ListLendAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
 
@@ -124,7 +125,7 @@ class ListDepartmentsView(PaginationAPIView):
         queryset = Lend.objects.filter(stt=1)
         if request.query_params.get('department_code'):
             queryset = queryset.filter(id__department_code__code=request.query_params.get('department_code'))
-        serializer = LendAssetSerializer(queryset, many=True)
+        serializer = ListLendAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
 
