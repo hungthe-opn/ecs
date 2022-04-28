@@ -1,14 +1,42 @@
-# # This is an auto-generated Django model module.
-# # You'll have to do the following manually to clean this up:
-# #   * Rearrange models' order
-# #   * Make sure each model has one field with primary_key=True
-# #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-# #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# # Feel free to rename the models, but don't rename db_table values or field names.
-# from django.db import models
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+# class Category(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=30, blank=True, null=True)
 #
+#     class Meta:
+#         managed = False
+#         db_table = 'category'
+
 #
+# class Departments(models.Model):
+#     id = models.BigAutoField(primary_key=True)
+#     code = models.CharField(unique=True, max_length=32)
+#     parent_code = models.CharField(max_length=64, blank=True, null=True)
+#     company_code = models.CharField(max_length=64, blank=True, null=True)
+#     postal_code = models.CharField(max_length=10, blank=True, null=True)
+#     name = models.CharField(max_length=64)
+#     address = models.CharField(max_length=255, blank=True, null=True)
+#     color_code = models.CharField(max_length=10, blank=True, null=True)
+#     created_by = models.CharField(max_length=4)
+#     updated_by = models.CharField(max_length=4)
+#     created_at = models.DateTimeField(blank=True, null=True)
+#     updated_at = models.DateTimeField(blank=True, null=True)
+#     employee_id = models.CharField(max_length=4, blank=True, null=True)
 #
+#     class Meta:
+#         managed = False
+#         db_table = 'departments'
+
+
 # class Employees(models.Model):
 #     id = models.CharField(primary_key=True, max_length=4)
 #     position_id = models.IntegerField()
@@ -50,75 +78,74 @@
 #     class Meta:
 #         managed = False
 #         db_table = 'employees'
-#
-#
+
+
 # class Lend(models.Model):
-#     lend_id = models.CharField(db_column='LEND_ID', primary_key=True, max_length=4)  # Field name made lowercase.
-#     stt = models.IntegerField(db_column='STT')  # Field name made lowercase.
-#     device_code = models.CharField(db_column='DEVICE_CODE', max_length=45)  # Field name made lowercase.
-#     rent_time = models.DateField(db_column='RENT_TIME', blank=True, null=True)  # Field name made lowercase.
-#     pay_time = models.DateField(db_column='PAY_TIME', blank=True, null=True)  # Field name made lowercase.
-#     describe = models.CharField(db_column='DESCRIBE', max_length=255, blank=True, null=True)  # Field name made lowercase.
-#     quantity = models.IntegerField(db_column='QUANTITY', blank=True, null=True)  # Field name made lowercase.
-#     status = models.CharField(db_column='STATUS', max_length=45, blank=True, null=True)  # Field name made lowercase.
-#     insurance_start = models.DateField(db_column='INSURANCE_START', blank=True, null=True)  # Field name made lowercase.
-#     insurance_end = models.DateField(db_column='INSURANCE_END', blank=True, null=True)  # Field name made lowercase.
-#     warranty = models.CharField(db_column='WARRANTY', max_length=30, blank=True, null=True)  # Field name made lowercase.
-#     condition = models.CharField(db_column='CONDITION', max_length=45, blank=True, null=True)  # Field name made lowercase.
-#     id = models.ForeignKey(Employees, models.DO_NOTHING, db_column='ID')  # Field name made lowercase.
-#     product = models.ForeignKey('Repository', models.DO_NOTHING, db_column='PRODUCT_ID')  # Field name made lowercase.
+#     id = models.IntegerField(primary_key=True)
+#     stt = models.IntegerField()
+#     device_code = models.CharField(max_length=45)
+#     rent_time = models.DateField(blank=True, null=True)
+#     pay_time = models.DateField(blank=True, null=True)
+#     describe = models.CharField(max_length=255, blank=True, null=True)
+#     quantity = models.IntegerField(blank=True, null=True)
+#     status = models.CharField(max_length=45, blank=True, null=True)
+#     insurance_start = models.DateField(blank=True, null=True)
+#     insurance_end = models.DateField(blank=True, null=True)
+#     warranty = models.CharField(max_length=30, blank=True, null=True)
+#     condition = models.CharField(max_length=45, blank=True, null=True)
+#     employee = models.ForeignKey(Employees, models.DO_NOTHING)
+#     repository = models.ForeignKey('Repository', models.DO_NOTHING)
 #     created_at = models.DateTimeField(blank=True, null=True)
 #     updated_at = models.DateTimeField(blank=True, null=True)
 #
 #     class Meta:
 #         managed = False
 #         db_table = 'lend'
-#
-#
+
+
 # class Manage(models.Model):
-#     manage_id = models.AutoField(db_column='MANAGE_ID', primary_key=True)  # Field name made lowercase.
-#     goods_receipt = models.CharField(db_column='GOODS_RECEIPT', max_length=45, blank=True, null=True)  # Field name made lowercase.
-#     import_date = models.DateField(db_column='IMPORT_DATE', blank=True, null=True)  # Field name made lowercase.
-#     export = models.CharField(db_column='EXPORT', max_length=45, blank=True, null=True)  # Field name made lowercase.
-#     export_date = models.DateField(db_column='EXPORT_DATE', blank=True, null=True)  # Field name made lowercase.
-#     quantity = models.IntegerField(db_column='QUANTITY')  # Field name made lowercase.
-#     reason = models.CharField(db_column='REASON', max_length=255, blank=True, null=True)  # Field name made lowercase.
-#     status = models.IntegerField(db_column='STATUS')  # Field name made lowercase.
-#     status_manage = models.CharField(db_column='STATUS_MANAGE', max_length=45, blank=True, null=True)  # Field name made lowercase.
-#     lend = models.ForeignKey(Lend, models.DO_NOTHING, db_column='LEND_ID')  # Field name made lowercase.
-#     id = models.ForeignKey(Employees, models.DO_NOTHING, db_column='ID')  # Field name made lowercase.
-#     product = models.ForeignKey('Repository', models.DO_NOTHING, db_column='PRODUCT_ID')  # Field name made lowercase.
+#     goods_receipt = models.CharField(max_length=45, blank=True, null=True)
+#     import_date = models.DateField(blank=True, null=True)
+#     export = models.CharField(max_length=45, blank=True, null=True)
+#     export_date = models.DateField(blank=True, null=True)
+#     quantity = models.IntegerField()
+#     reason = models.CharField(max_length=255, blank=True, null=True)
+#     status = models.IntegerField()
+#     status_manage = models.CharField(max_length=45, blank=True, null=True)
+#     lend = models.ForeignKey(Lend, models.DO_NOTHING)
+#     employee = models.ForeignKey(Employees, models.DO_NOTHING)
+#     repositoy = models.ForeignKey('Repository', models.DO_NOTHING)
 #     created_at = models.DateTimeField(blank=True, null=True)
 #     updated_at = models.DateTimeField(blank=True, null=True)
 #
 #     class Meta:
 #         managed = False
 #         db_table = 'manage'
-#
-#
+
+
 # class Repository(models.Model):
-#     product_id = models.CharField(db_column='PRODUCT_ID', primary_key=True, max_length=10)  # Field name made lowercase.
-#     name = models.CharField(db_column='NAME', max_length=30)  # Field name made lowercase.
-#     quantity = models.IntegerField(db_column='QUANTITY', blank=True, null=True)  # Field name made lowercase.
-#     color = models.CharField(db_column='COLOR', max_length=45, blank=True, null=True)  # Field name made lowercase.
-#     lend_device = models.IntegerField(db_column='LEND_DEVICE')  # Field name made lowercase.
-#     sum_device = models.IntegerField(db_column='SUM_DEVICE')  # Field name made lowercase.
-#     residual = models.IntegerField(db_column='RESIDUAL')  # Field name made lowercase.
-#     floor = models.IntegerField(db_column='FLOOR', blank=True, null=True)  # Field name made lowercase.
-#     description = models.CharField(db_column='DESCRIPTION', max_length=255, blank=True, null=True)  # Field name made lowercase.
-#     type = models.ForeignKey('Type', models.DO_NOTHING, db_column='TYPE_ID', blank=True, null=True)  # Field name made lowercase.
+#     id = models.IntegerField(primary_key=True)
+#     name = models.CharField(max_length=30)
+#     quantity = models.IntegerField(blank=True, null=True)
+#     color = models.CharField(max_length=45, blank=True, null=True)
+#     lend_device = models.IntegerField()
+#     sum_device = models.IntegerField()
+#     residual = models.IntegerField()
+#     floor = models.IntegerField(blank=True, null=True)
+#     description = models.CharField(max_length=255, blank=True, null=True)
+#     type = models.ForeignKey('Type', related_name="type_id", on_delete=models.CASCADE, blank=True, null=True)
 #     updated_at = models.DateTimeField(blank=True, null=True)
 #
 #     class Meta:
 #         managed = False
 #         db_table = 'repository'
-#
-#
+
+
 # class Type(models.Model):
-#     type_id = models.CharField(db_column='TYPE_ID', primary_key=True, max_length=4)  # Field name made lowercase.
-#     quantity = models.IntegerField(db_column='QUANTITY', blank=True, null=True)  # Field name made lowercase.
-#     name = models.CharField(db_column='NAME', max_length=30, blank=True, null=True)  # Field name made lowercase.
-#     category = models.ForeignKey(Category, models.DO_NOTHING, db_column='CATEGORY_ID', blank=True, null=True)  # Field name made lowercase.
+#     id = models.IntegerField(primary_key=True)
+#     quantity = models.IntegerField(blank=True, null=True)
+#     name = models.CharField(max_length=30, blank=True, null=True)
+#     category = models.ForeignKey(Category, related_name="category_id", on_delete=models.CASCADE, blank=True, null=True)
 #
 #     class Meta:
 #         managed = False

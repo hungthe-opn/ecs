@@ -9,7 +9,6 @@ from .serializer import LendSerializer, LendRemoteSerializer, LendAssetSerialize
     CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer, AddRemotesSerializer
 from datetime import date, timedelta
 from django.db.models import Q
-
 from ..manage_asset.serializer import AddManagerSerializer
 
 
@@ -230,7 +229,7 @@ class ExportLendRepository(APIView):
         lend = Lend.objects.filter(lend_id=pk).first()
         lend.stt = 6
         lend.save()
-        manage = {
+        data = {
             'import_date': date.today(),
             'quantity': 1,
             'reason': request.data.get('reason'),
@@ -241,7 +240,7 @@ class ExportLendRepository(APIView):
         }
         lend.product.quantity -= 1
         lend.product.save()
-        serializer = AddManagerSerializer(data=manage)
+        serializer = AddManagerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=200)
@@ -251,25 +250,30 @@ class ExportLendRepository(APIView):
 class AddRemotedView(APIView):
 
     def post(self, request):
-        data = request.data
-        lend = Lend.objects.all()
-        lend.stt = 2
-        lend.save()
-        lend_add = {
+        # lend = Lend.objects.all().first()
+        data = {
+            "lend_id": "0009",
+            'id': request.data.get('employee_id'),
+            'product': request.data.get('product_id'),
             'quantity': 1,
             'device_code': request.data.get('device_code'),
-            'lend': lend.lend_id,
-            'id': lend.id,
-            'product': lend.product_id,
+            'stt': request.data.get('stt')
             }
-        if data.get('rent_time'):
-            data['rent_time'] = convert_date_front_to_back(data.get('rent_time'))
-        if data.get('pay_time'):
-            data['pay_time'] = convert_date_front_to_back(data.get('pay_time'))
-        lend.product.quantity -= 1
-        lend.product.save()
-        serializer = AddRemotesSerializer(data=lend_add)
+
+        if request.data.get('rent_time'):
+            data['rent_time'] = convert_date_front_to_back(request.data.get('rent_time'))
+        if request.data.get('pay_time'):
+            data['pay_time'] = convert_date_front_to_back(request.data.get('pay_time'))
+
+        print('debug ', data)
+        serializer = AddRemotesSerializer(data=data)
         if serializer.is_valid():
+            print('debug: ok')
             serializer.save()
             return Response(serializer.data, status=200)
+        # lend = Lend.objects.all().first()
+        # lend.product.quantity -= 1
+        # lend.product.save()
         return Response(serializer.errors)
+        # serializer = AddRemotesSerializer(lend)
+        # return Response(serializer.data)

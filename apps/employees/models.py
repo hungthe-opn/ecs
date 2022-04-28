@@ -20,7 +20,7 @@ class AccountModel(models.Model):
 
 
 class Employees(models.Model):
-    id = models.CharField(primary_key=True, max_length=4)
+    id = models.AutoField(primary_key=True, max_length=4)
     position_id = models.IntegerField()
     department_code = models.ForeignKey('DepartmentModel', to_field='code', db_column='department_code',
                                         on_delete=models.DO_NOTHING, related_name='department_employees')

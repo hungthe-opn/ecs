@@ -169,7 +169,7 @@ class AddRemotesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lend
-        fields = ('id', 'product_id', 'stt', 'device_code', 'rent_time', 'pay_time')
+        fields = ('lend_id', 'id', 'product', 'quantity', 'stt', 'device_code', 'rent_time', 'pay_time')
 
 
 
