@@ -45,7 +45,7 @@ class Repository(models.Model):
     residual = models.IntegerField()
     floor = models.IntegerField(choices=FLOORS, blank=True, null=True)
     description = models.CharField(max_length=255, blank=True, null=True)
-    type = models.ForeignKey('Type', related_name="type_id", on_delete=models.CASCADE, blank=True, null=True)
+    type = models.ForeignKey(Type, related_name="repository", on_delete=models.CASCADE, blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:

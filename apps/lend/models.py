@@ -28,7 +28,7 @@ class Lend(models.Model):
     # product = models.ForeignKey(Repository, related_name='lend', on_delete=models.CASCADE, db_column='PRODUCT_ID')  # Field name made lowercase.
     # created_at = models.DateTimeField(blank=True, null=True)
     # updated_at = models.DateTimeField(blank=True, null=True)
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     stt = models.IntegerField()
     device_code = models.CharField(max_length=45)
     rent_time = models.DateField(blank=True, null=True)
@@ -40,10 +40,10 @@ class Lend(models.Model):
     insurance_end = models.DateField(blank=True, null=True)
     warranty = models.CharField(max_length=30, blank=True, null=True)
     condition = models.CharField(max_length=45,  choices=CONDITION, blank=True, null=True)
-    employee = models.ForeignKey(Employees, related_name="lend", on_delete=models.CASCADE)
-    repository = models.ForeignKey('Repository', related_name='lend', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
+    employee = models.ForeignKey(Employees, related_name="lend_employee", on_delete=models.CASCADE)
+    repository = models.ForeignKey(Repository, related_name='lend', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     class Meta:
         managed = False

@@ -13,11 +13,11 @@ class Manage(models.Model):
     reason = models.CharField(max_length=255, blank=True, null=True)
     status = models.IntegerField()
     status_manage = models.CharField(max_length=45, blank=True, null=True)
-    lend = models.ForeignKey(Lend, related_name="lend_id", on_delete=models.CASCADE)
-    employee = models.ForeignKey(Employees, related_name="employee_id", on_delete=models.CASCADE)
-    repository = models.ForeignKey('Repository', related_name="repository",on_delete=models.CASCADE)
-    created_at = models.DateTimeField(blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
+    lend = models.ForeignKey(Lend, related_name="manage", on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employees, related_name="employee", on_delete=models.CASCADE)
+    repository = models.ForeignKey(Repository, related_name="repository", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(blank=True, null=True, auto_now_add=True )
+    updated_at = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     class Meta:
         managed = False

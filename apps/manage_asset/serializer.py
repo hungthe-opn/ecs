@@ -3,7 +3,7 @@ from .models import *
 
 
 class ListAssetSerializer(serializers.ModelSerializer):
-    id = serializers.SerializerMethodField()
+    employee_id = serializers.SerializerMethodField()
     employee_name = serializers.SerializerMethodField()
     department_code = serializers.SerializerMethodField()
     device_code = serializers.SerializerMethodField()
@@ -12,22 +12,22 @@ class ListAssetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Manage
-        fields = ('id', 'employee_name', 'department_code', 'device_code', 'type_name', 'quantity', 'import_date', 'reason','stt', 'status')
+        fields = ('id', 'employee_id', 'employee_name', 'department_code', 'device_code', 'type_name', 'quantity', 'import_date', 'reason','stt', 'status')
 
-    def get_id(self, obj):
-        return obj.id.id
+    def get_employee_id(self, obj):
+        return obj.employee.id
 
     def get_employee_name(self, obj):
-        return obj.id.name
+        return obj.employee.name
 
     def get_department_code(self, obj, format=None):
-        return obj.id.department_code.code
+        return obj.employee.department_code.code
 
     def get_device_code(self, obj):
         return obj.lend.device_code
 
     def get_type_name(self, obj):
-        return obj.product.type.name
+        return obj.repository.type.name
 
     def get_stt(self,obj):
         return obj.lend.stt
@@ -37,7 +37,7 @@ class AddManagerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Manage
-        fields = ('import_date', 'quantity', 'reason', 'status', 'lend', 'id', 'product')
+        fields = ('import_date', 'quantity', 'reason', 'status', 'lend', 'employee', 'repository')
 
 
 

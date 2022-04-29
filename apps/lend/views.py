@@ -6,29 +6,33 @@ from api.pagination import CustomPagination, PaginationAPIView
 from api.utils import convert_date_front_to_back
 from .models import *
 from .serializer import LendSerializer, DeviceLendSerializer, \
-    CreateDeviceSerializer, LendAssetExportSerializer, InsuranceSerializer, NotifySerializer, AddRemotesSerializer, \
-    ListLendRemoteSerializer, ListLendAssetSerializer
+     InsuranceSerializer, NotifySerializer, AddRemotesSerializer, \
+    ListLendRemoteSerializer, ListLendAssetSerializer, AddDeviceSerializer, AssetExportSerializer
 from datetime import date, timedelta
 from django.db.models import Q
 from ..manage_asset.serializer import AddManagerSerializer
 
 
-class LendView(APIView):
-    def get(self, request, format=None):
+class LendView(PaginationAPIView):
+    pagination_class = CustomPagination
+
+    def get(self, request):
         queryset = Lend.objects.all()
         serializer = LendSerializer(queryset, many=True)
-        return Response(serializer.data)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
 
 
 class ListLentView(PaginationAPIView):
     pagination_class = CustomPagination
 
     def get(self, request, format=None, *args):
+        """
+        Pass employee_id from params return list stt=2
+        """
         queryset = Lend.objects.filter(stt=2)
-
-        # request id params
         if request.query_params.get('employees_id'):
-            queryset = queryset.filter(id=request.query_params.get('employees_id'))
+            queryset = queryset.filter(employee=request.query_params.get('employees_id'))
         serializer = ListLendRemoteSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
@@ -38,43 +42,53 @@ class SearchLendView(PaginationAPIView):
     pagination_class = CustomPagination
 
     def get(self, request, pk, format=None, *args, **kwargs):
-        queryset = Lend.objects.filter(id=pk)
+
+        """
+         Return list employee_id = pk
+        """
+
+        queryset = Lend.objects.filter(employee=pk, stt=2)
         serializer = ListLendRemoteSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
 
 
-class EndRemoteView(PaginationAPIView):
-    pagination_class = CustomPagination
-
+class EndRemoteView(APIView):
     def post(self, request, pk, format=None, *args, **kwargs):
-        lend = Lend.objects.filter(lend_id=pk).first()
+        """
+
+        """
+        lend = Lend.objects.filter(id=pk).first()
         lend.stt = 1
+        print(lend.__dict__)
         lend.save()
         return Response({
-            'message': 'OK'
+            'message': 'Successful conversion !'
         })
 
 
 class CreateRemoteView(APIView):
-    serializer_class = ListLendRemoteSerializer()
 
     def post(self, request, *args):
+        """
+
+        """
         data = request.data
-        print(data)
-        serializer = self.serializer_class(data = data)
+        serializer = ListLendRemoteSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data})
+            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UploadRemoteView(APIView):
 
     def patch(self, request, pk, format=None):
-        queryset = Lend.objects.filter(lend_id=pk).first()
+        """
+
+        """
+        queryset = Lend.objects.filter(id=pk).first()
         data = request.data
-        # time type conversion
         if data.get('rent_time'):
             data['rent_time'] = convert_date_front_to_back(data.get('rent_time'))
         if data.get('pay_time'):
@@ -83,7 +97,7 @@ class UploadRemoteView(APIView):
         serializer = ListLendRemoteSerializer(queryset, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data})
+            return Response({'result': serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -100,31 +114,30 @@ class AssetDepartmentsView(PaginationAPIView):
 class AssetDepartmentsExportView(APIView):
 
     def get(self, request, pk, format=None):
-        queryset = Lend.objects.filter(lend_id=pk)
-        serializer = LendAssetExportSerializer(queryset, many=True)
-        return Response({'result': serializer.data})
+        queryset = Lend.objects.filter(id=pk)
+        serializer = AssetExportSerializer(queryset, many=True)
+        return Response({'result': serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request, pk, *args, **kwargs):
         data = self.request.data
         data['stt'] = 4
-        # data = data['reason']
-        print(data)
-        queryset = Lend.objects.filter(lend_id=pk)
-        serializer = LendAssetExportSerializer(queryset, data=data)
+
+        queryset = Lend.objects.filter(id=pk)
+        serializer = AssetExportSerializer(queryset, data=data)
 
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data})
+            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListDepartmentsView(PaginationAPIView):
     pagination_class = CustomPagination
 
-    def get(self, request, *args,):
+    def get(self, request, *args):
         queryset = Lend.objects.filter(stt=1)
         if request.query_params.get('department_code'):
-            queryset = queryset.filter(id__department_code__code=request.query_params.get('department_code'))
+            queryset = queryset.filter(employee__department_code__code=request.query_params.get('department_code'))
         serializer = ListLendAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
@@ -133,7 +146,7 @@ class ListDepartmentsView(PaginationAPIView):
 class DeviceLendView(PaginationAPIView):
     pagination_class = CustomPagination
 
-    def get(self, request, format=None):
+    def get(self, request):
         queryset = Lend.objects.filter(stt=3)
         serializer = DeviceLendSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
@@ -142,12 +155,11 @@ class DeviceLendView(PaginationAPIView):
 
 class DeviceLendExportView(APIView):
 
-    def post(self, request, format=None):
+    def post(self, request):
         data = request.data
         data['stt'] = 3
-        serializer = CreateDeviceSerializer(data=data)
+        serializer = AddDeviceSerializer(data=data)
         if serializer.is_valid():
-            print(serializer.validated_data)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -165,15 +177,17 @@ class InsuranceView(PaginationAPIView):
 
 class EndInventoryView(APIView):
 
-    def post(self, request, pk, format=None, *args, **kwargs):
-        insurance = Lend.objects.filter(lend_id=pk, stt=6).first()
+    def post(self, request, pk):
+        insurance = Lend.objects.filter(id=pk, stt=6).first()
         insurance.stt = 1
         insurance.save()
         serializer = InsuranceSerializer(insurance)
-        return Response({'result': serializer.data})
+        return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
 
+
+class AddInsuranceView(APIView):
     def patch(self, request, pk, *args, format=None):
-        queryset = Lend.objects.filter(lend_id= pk, stt=1).first()
+        queryset = Lend.objects.filter(id=pk, stt=1).first()
         data = request.data
         queryset.stt = 6
         if data.get('insurance_start'):
@@ -184,26 +198,27 @@ class EndInventoryView(APIView):
         serializer = InsuranceSerializer(queryset, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data})
+            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class NotifyView(APIView):
+class NotifyView(PaginationAPIView):
+    pagination_class = CustomPagination
 
     def get(self, request, *args):
         today = date.today()
         coming_due_date = today + timedelta(days=10)
         coming_due = Lend.objects.filter(stt=1).filter(Q(pay_time__lte=coming_due_date) |
                                                        Q(pay_time__lte=today))
-
         serializer = NotifySerializer(coming_due, many=True)
-        return Response(serializer.data)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)
 
 
 class ImportLendRepository(APIView):
 
     def post(self, request, pk):
-        lend = Lend.objects.filter(lend_id=pk).first()
+        lend = Lend.objects.filter(id=pk).first()
         lend.stt = 4
         lend.save()
         manage = {
@@ -211,70 +226,68 @@ class ImportLendRepository(APIView):
             'quantity': 1,
             'reason': request.data.get('reason'),
             'status': 1,
-            'lend': lend.lend_id,
-            'id': '0018',
-            'product': lend.product_id,
+            'lend': lend.id,
+            'employee': lend.employee.id,
+            'repository': lend.repository.id
         }
-        lend.product.quantity += 1
-        lend.product.save()
+        print(manage)
+        lend.repository.quantity += 1
+        lend.repository.save()
         serializer = AddManagerSerializer(data=manage)
         if serializer.is_valid():
+            print(serializer.validated_data)
+
             serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors)
+            print('debug',serializer.validated_data)
+            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ExportLendRepository(APIView):
 
     def post(self, request, pk):
-        lend = Lend.objects.filter(lend_id=pk).first()
+        lend = Lend.objects.filter(id=pk).first()
         lend.stt = 6
         lend.save()
         data = {
             'import_date': date.today(),
             'quantity': 1,
             'reason': request.data.get('reason'),
-            'status': 2,
-            'lend': lend.lend_id,
-            'id': '0018',
-            'product': lend.product_id,
+            'status': 1,
+            'lend': lend.id,
+            'employee': lend.employee.id,
+            'repository': lend.repository.id
         }
-        lend.product.quantity -= 1
-        lend.product.save()
+        lend.repository.quantity -= 1
+        lend.repository.save()
         serializer = AddManagerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors)
+            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddRemotedView(APIView):
 
     def post(self, request):
-        # lend = Lend.objects.all().first()
         data = {
-            "lend_id": "0009",
-            'id': request.data.get('employee_id'),
-            'product': request.data.get('product_id'),
+            'employee': request.data.get('employee_id'),
+            'repository': request.data.get('repository_id'),
             'quantity': 1,
             'device_code': request.data.get('device_code'),
             'stt': request.data.get('stt')
-            }
+        }
 
         if request.data.get('rent_time'):
             data['rent_time'] = convert_date_front_to_back(request.data.get('rent_time'))
         if request.data.get('pay_time'):
             data['pay_time'] = convert_date_front_to_back(request.data.get('pay_time'))
-
-        print('debug ', data)
         serializer = AddRemotesSerializer(data=data)
         if serializer.is_valid():
-            print('debug: ok')
             serializer.save()
-            return Response(serializer.data, status=200)
-        # lend = Lend.objects.all().first()
-        # lend.product.quantity -= 1
-        # lend.product.save()
-        return Response(serializer.errors)
-        # serializer = AddRemotesSerializer(lend)
-        # return Response(serializer.data)
+            repository = Repository.objects.filter(id=data.get('repository')).first()
+            repository.quantity -= 1
+            repository.save()
+            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

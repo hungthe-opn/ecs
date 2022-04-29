@@ -14,7 +14,7 @@ class ImportManageView(PaginationAPIView):
     pagination_class = CustomPagination
 
     def get(self, request, *args, **kwargs):
-        queryset = Manage.objects.filter(lend_id__stt=4, status=1)
+        queryset = Manage.objects.filter(lend__stt=4, status=1)
         serializer = ListAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
@@ -24,12 +24,10 @@ class ExportManageView(PaginationAPIView):
     pagination_class = CustomPagination
 
     def get(self, request, *args, **kwargs):
-        queryset = Manage.objects.filter(lend_id__stt=6, status=2)
+        queryset = Manage.objects.filter(lend__stt=6, status=2)
         serializer = ListAssetSerializer(queryset, many=True)
         result = self.paginate_queryset(serializer.data)
         return self.get_paginated_response(result)
 
-# class DeleteImportManageView(APIView):
-#     def delete(self, request, pk, form=None):
-#         queryset = self.get_object(pk)
+
 #
