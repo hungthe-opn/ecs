@@ -21,8 +21,11 @@ class CategoryView(PaginationAPIView):
         return self.get_paginated_response(result)
 
 
-class CategoryDetailView(APIView):
+class CategoryDetailView(PaginationAPIView):
+    pagination_class = CustomPagination
+
     def get(self, request, pk):
         category = Category.objects.filter(id=pk)
         serializer = CategorySerializer(category, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        result = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(result)

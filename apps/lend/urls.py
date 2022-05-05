@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LendView, SearchLendView, ListLentView, EndRemoteView, CreateRemoteView, UploadRemoteView, \
+from .views import LendView, SearchLendView, ListLentView, EndRemoteView, UploadRemoteView, \
     ListDepartmentsView, AssetDepartmentsView, DeviceLendView, AssetDepartmentsExportView, \
     InsuranceView, EndInventoryView, DeviceLendExportView, NotifyView, ImportLendRepository, ExportLendRepository, \
     AddRemotedView, AddInsuranceView
@@ -11,7 +11,6 @@ urlpatterns = [
     path('list/', ListLentView.as_view(), name='lend_list_employee_id'),
     path('search/<pk>', SearchLendView.as_view(), name='lend_remote'),
     path('endremote/<pk>', EndRemoteView.as_view(), name='end_remote'),
-    path('created/', CreateRemoteView.as_view(), name='lend_created'),
     path('upload/<pk>', UploadRemoteView.as_view(), name='lend_upload'),
     path('assert/', AssetDepartmentsView.as_view(), name='lend_assert'),
     path('assertexport/<pk>', AssetDepartmentsExportView.as_view(), name='lend_assert_export'),

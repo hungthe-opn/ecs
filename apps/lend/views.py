@@ -1,9 +1,8 @@
-import self as self
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from api.pagination import CustomPagination, PaginationAPIView
-from api.utils import convert_date_front_to_back
+from api.utils import convert_date_front_to_back, custom_response
 from .models import *
 from .serializer import LendSerializer, DeviceLendSerializer, \
      InsuranceSerializer, NotifySerializer, AddRemotesSerializer, \
@@ -67,22 +66,7 @@ class EndRemoteView(APIView):
         })
 
 
-class CreateRemoteView(APIView):
-
-    def post(self, request, *args):
-        """
-
-        """
-        data = request.data
-        serializer = ListLendRemoteSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class UploadRemoteView(APIView):
-
     def patch(self, request, pk, format=None):
         """
 
@@ -97,8 +81,11 @@ class UploadRemoteView(APIView):
         serializer = ListLendRemoteSerializer(queryset, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data, msg_display='Chỉnh sửa lại thời gian bảo hành thành công.'),
+                            status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Chỉnh sửa lại thời gian remote thuất bại. Vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class AssetDepartmentsView(PaginationAPIView):
@@ -116,7 +103,7 @@ class AssetDepartmentsExportView(APIView):
     def get(self, request, pk, format=None):
         queryset = Lend.objects.filter(id=pk)
         serializer = AssetExportSerializer(queryset, many=True)
-        return Response({'result': serializer.data}, status=status.HTTP_200_OK)
+        return Response(custom_response(serializer.data), status=status.HTTP_200_OK)
 
     def post(self, request, pk, *args, **kwargs):
         data = self.request.data
@@ -127,8 +114,10 @@ class AssetDepartmentsExportView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data), status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Mượn thuất bại. Vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListDepartmentsView(PaginationAPIView):
@@ -161,8 +150,11 @@ class DeviceLendExportView(APIView):
         serializer = AddDeviceSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data, msg_display='Xuất mượn thành công.'),
+                            status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Xuất mượn thuất bại. Vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class InsuranceView(PaginationAPIView):
@@ -182,7 +174,8 @@ class EndInventoryView(APIView):
         insurance.stt = 1
         insurance.save()
         serializer = InsuranceSerializer(insurance)
-        return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.data, msg_display='Kết thúc thành công'),
+                        status=status.HTTP_201_CREATED)
 
 
 class AddInsuranceView(APIView):
@@ -198,8 +191,11 @@ class AddInsuranceView(APIView):
         serializer = InsuranceSerializer(queryset, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data, msg_display='Thêm thời gian thành công'),
+                            status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Thêm thời gian bảo hành thuất bại. Vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class NotifyView(PaginationAPIView):
@@ -230,17 +226,16 @@ class ImportLendRepository(APIView):
             'employee': lend.employee.id,
             'repository': lend.repository.id
         }
-        print(manage)
         lend.repository.quantity += 1
         lend.repository.save()
         serializer = AddManagerSerializer(data=manage)
         if serializer.is_valid():
-            print(serializer.validated_data)
-
             serializer.save()
-            print('debug',serializer.validated_data)
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data, msg_display='Nhập thiết bị mượn thành công'),
+                            status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Quá trình nhập thuất bại. Vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class ExportLendRepository(APIView):
@@ -263,8 +258,11 @@ class ExportLendRepository(APIView):
         serializer = AddManagerSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data, msg_display='Nhập thiết bị thành công'),
+                            status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Nhập thiết bị thất bại, vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddRemotedView(APIView):
@@ -288,6 +286,8 @@ class AddRemotedView(APIView):
             repository = Repository.objects.filter(id=data.get('repository')).first()
             repository.quantity -= 1
             repository.save()
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(custom_response(serializer.data, msg_display='Thêm thiết bị mượn thành công'),
+                            status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.errors, response_code=400, response_msg='ERROR',
+                                        msg_display='Thêm thiết bị mượn đã thất bại, vui lòng kiểm tra lại'),
+                        status=status.HTTP_400_BAD_REQUEST)

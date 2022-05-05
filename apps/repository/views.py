@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
+
+from api.utils import custom_response
 from .serializer import *
 from .models import *
 from rest_framework.views import APIView
@@ -35,7 +37,7 @@ class RepositoryPostType(PaginationAPIView):
         serializer = RepositorySerializer(queryset, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response(custom_response(serializer.data), status=status.HTTP_201_CREATED)
         return Response(serializer.errors,  status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -56,7 +58,7 @@ class AddProductView(PaginationAPIView):
         repository.quantity += quantity
         repository.save()
         serializer = AddRepositorySerializer(repository)
-        return Response({'result': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(custom_response(serializer.data), status=status.HTTP_201_CREATED)
 
 
 class RepositoryListView(PaginationAPIView):

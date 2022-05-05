@@ -75,6 +75,7 @@ class PaginationAPIView(APIView):
         # assert self.paginator is not None
         return self.paginator.get_paginated_response(data)
 
+
 class CustomPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'perpage'
